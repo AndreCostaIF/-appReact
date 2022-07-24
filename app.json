@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "nasaApp",
+    "slug": "nasaApp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
