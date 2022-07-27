@@ -1,21 +1,81 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image, WebView } from 'react-native';
+import api from './utilities/api.js'
+//Navegacao
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+
+const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    backgroundColor:'#000',
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  text:{
+    color:'#fff',
+    fontSize:15,
+    padding:10
+ }
+});   
+
+export default class App extends React.Component{
+
+  constructor(props){
+    super(props)
+
+    this.state= {
+      title:'',
+      pic:'',
+      explanation:'',
+      date:'',
+      media:''
+    }     
+  }   
+  
+  componentDidMount(){
+    api.nasaPics().then((res)=>{
+      this.setState({
+        title:res.title,
+        pic:res.url,
+        explanation:res.explanation,
+        date:res.date,
+        media:res.media_type
+      })
+    })
+    .catch((error)=>{
+      console.error(error)
+    })   
+  }
+
+
+
+render(){
+  return(
+      <View style={styles.container}>
+      <Text style={styles.text}>{this.state.date}</Text>
+      <Text style={styles.text}>{this.state.title}</Text>
+                     
+      {this.state.media === 'video' ?
+      <WebView
+       javaScriptEnabled={true}
+       source={{url: this.state.pic}}
+       style={{width: 370, height:200}}
+      />:
+      <Image
+        source={{url: this.state.pic}}
+       style={{width: 370, height:200}}
+          
+      />}
+      <Text style={styles.text}>{this.state.explanation}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+}
+
+
+ 
+
