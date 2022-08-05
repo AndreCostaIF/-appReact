@@ -1,11 +1,43 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Image, WebView } from 'react-native';
-import api from './utilities/api.js'
-//Navegacao
 
-import {createAppContainer} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
+import { createAppContainer } from 'react-navigation';
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import Apod from './apod';
+import Login from './login';
+
+Icon.loadFont();
+
+const mainNavigation = createMaterialBottomTabNavigator(
+  {
+    Apod: {
+      screen: Apod,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused }) => (
+          <Icon name="rocket" size={20} color={focused ? '#fff' : '#ddd'} />
+        ),
+      }),
+    },
+    Login: {
+      screen: Login,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused }) => (
+          <Icon name="lock" size={20} color={focused ? '#fff' : '#ddd'} />
+        ),
+      }),
+    },
+  },
+  {
+    barStyle: {
+      backgroundColor: '#7159c1',
+    },
+  },
+);
+
+export default createAppContainer(mainNavigation);
 
 const styles = StyleSheet.create({
   container:{
@@ -21,60 +53,9 @@ const styles = StyleSheet.create({
  }
 });   
 
-export default class App extends React.Component{
-
-  constructor(props){
-    super(props)
-
-    this.state= {
-      title:'',
-      pic:'',
-      explanation:'',
-      date:'',
-      media:''
-    }     
-  }   
-  
-  componentDidMount(){
-    api.nasaPics().then((res)=>{
-      this.setState({
-        title:res.title,
-        pic:res.url,
-        explanation:res.explanation,
-        date:res.date,
-        media:res.media_type
-      })
-    })
-    .catch((error)=>{
-      console.error(error)
-    })   
-  }
 
 
 
-render(){
-  return(
-      <View style={styles.container}>
-      <Text style={styles.text}>{this.state.date}</Text>
-      <Text style={styles.text}>{this.state.title}</Text>
-                     
-      {this.state.media === 'video' ?
-      <WebView
-       javaScriptEnabled={true}
-       source={{url: this.state.pic}}
-       style={{width: 370, height:200}}
-      />:
-      <Image
-        source={{url: this.state.pic}}
-       style={{width: 370, height:200}}
-          
-      />}
-      <Text style={styles.text}>{this.state.explanation}</Text>
-    </View>
-  );
-}
-
-}
 
 
  
